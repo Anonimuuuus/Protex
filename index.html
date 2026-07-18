@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protex — da tela ao sorriso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#eef3f1;
+    --ink-2:#e2eae7;
+    --porcelain:#16211f;
+    --porcelain-dim:#5b6c68;
+    --cyan:#0e8c7c;
+    --cyan-dim:#bfe8e1;
+    --slate:#5c6b70;
+    --amber:#b9741c;
+    --line:rgba(22,33,31,0.12);
+    --radius:14px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--porcelain);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{font-family:'Space Grotesk',sans-serif; letter-spacing:-0.01em;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  a{color:inherit;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 24px;}
+  @media(prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+
+  /* NAV */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(238,243,241,0.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{display:flex; align-items:center; justify-content:space-between; padding:18px 24px;}
+  .logo{font-family:'Space Grotesk'; font-weight:700; font-size:1.3rem; display:flex; align-items:center; gap:8px;}
+  .logo-dot{width:9px; height:9px; border-radius:50%; background:var(--cyan); box-shadow:0 0 12px var(--cyan);}
+  .nav-links{display:flex; gap:28px; font-size:0.92rem; color:var(--porcelain-dim);}
+  .nav-links a:hover{color:var(--cyan);}
+  .nav-cta{
+    background:var(--cyan); color:var(--ink); padding:10px 20px; border-radius:8px;
+    font-weight:600; font-size:0.9rem; border:none; cursor:pointer;
+  }
+  @media(max-width:760px){.nav-links{display:none;}}
+
+  /* HERO */
+  .hero{padding:88px 24px 60px; position:relative; overflow:hidden;}
+  .hero-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:center;}
+  @media(max-width:900px){.hero-grid{grid-template-columns:1fr;}}
+  .eyebrow{
+    color:var(--cyan); font-family:'IBM Plex Mono'; font-size:0.78rem; letter-spacing:0.14em;
+    text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:''; width:24px; height:1px; background:var(--cyan);}
+  .hero h1{font-size:clamp(2.2rem, 5vw, 3.6rem); font-weight:600; line-height:1.05; margin-bottom:22px;}
+  .hero h1 em{font-style:normal; color:var(--cyan);}
+  .hero p{color:var(--porcelain-dim); font-size:1.08rem; max-width:480px; margin-bottom:32px;}
+  .hero-actions{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--cyan); color:var(--ink); padding:14px 26px; border-radius:8px;
+    font-weight:600; border:none; cursor:pointer; font-size:0.95rem;
+  }
+  .btn-ghost{
+    background:transparent; color:var(--porcelain); padding:14px 26px; border-radius:8px;
+    font-weight:600; border:1px solid var(--line); cursor:pointer; font-size:0.95rem;
+  }
+  .btn-primary:hover{filter:brightness(1.08);}
+  .btn-ghost:hover{border-color:var(--cyan); color:var(--cyan);}
+
+  /* SIGNATURE SCAN VISUAL */
+  .scan-box{
+    position:relative; aspect-ratio:1/1; border-radius:18px;
+    background:var(--ink-2); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .tooth-svg{width:60%; height:60%; position:relative; z-index:2;}
+  .tooth-outline{fill:none; stroke:var(--porcelain-dim); stroke-width:1.4;}
+  .tooth-solid{
+    fill:var(--porcelain); opacity:0;
+    animation:reveal 3.2s ease-in-out infinite;
+  }
+  @keyframes reveal{
+    0%, 15%{opacity:0;}
+    45%, 70%{opacity:1;}
+    95%,100%{opacity:0;}
+  }
+  .scan-line{
+    position:absolute; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, transparent, var(--cyan), transparent);
+    box-shadow:0 0 20px 2px var(--cyan);
+    animation:sweep 3.2s ease-in-out infinite;
+    z-index:3;
+  }
+  @keyframes sweep{
+    0%{top:8%;}
+    50%{top:92%;}
+    100%{top:8%;}
+  }
+  .scan-caption{
+    position:absolute; bottom:16px; left:16px; right:16px;
+    display:flex; justify-content:space-between; font-family:'IBM Plex Mono';
+    font-size:0.7rem; color:var(--porcelain-dim);
+  }
+
+  /* SECTION SHARED */
+  section{padding:80px 24px;}
+  .section-head{max-width:640px; margin:0 auto 48px;}
+  .section-head.left{margin:0 0 48px;}
+  .section-eyebrow{color:var(--cyan); font-family:'IBM Plex Mono'; font-size:0.75rem; letter-spacing:0.12em; text-transform:uppercase; margin-bottom:12px;}
+  .section-head h2{font-size:clamp(1.7rem,3.5vw,2.4rem); font-weight:600; margin-bottom:14px;}
+  .section-head p{color:var(--porcelain-dim);}
+
+  /* STEPS */
+  .steps{border-top:1px solid var(--line);}
+  .steps-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:0;}
+  @media(max-width:900px){.steps-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.steps-grid{grid-template-columns:1fr;}}
+  .step{padding:32px 28px; border-right:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .step:last-child{border-right:none;}
+  .step-num{font-family:'IBM Plex Mono'; color:var(--cyan); font-size:0.85rem; margin-bottom:16px;}
+  .step h3{font-size:1.15rem; margin-bottom:10px; font-weight:600;}
+  .step p{color:var(--porcelain-dim); font-size:0.92rem;}
+
+  /* ORDER DEMO */
+  .demo{background:var(--ink-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .demo-panel{
+    background:var(--ink); border:1px solid var(--line); border-radius:var(--radius);
+    padding:0; overflow:hidden;
+  }
+  .demo-tabs{display:flex; border-bottom:1px solid var(--line);}
+  .demo-tab{
+    flex:1; text-align:center; padding:16px; font-family:'IBM Plex Mono'; font-size:0.78rem;
+    color:var(--porcelain-dim); position:relative; cursor:default;
+  }
+  .demo-tab.active{color:var(--cyan);}
+  .demo-tab.active::after{content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--cyan);}
+  .demo-tab .n{display:inline-block; width:20px; height:20px; border-radius:50%; border:1px solid currentColor; margin-right:6px; font-size:0.7rem; line-height:18px;}
+  .demo-body{padding:36px;}
+  @media(max-width:560px){.demo-body{padding:24px 20px;}}
+  .field-label{font-size:0.85rem; color:var(--porcelain-dim); margin-bottom:10px; display:block;}
+  .option-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px;}
+  @media(max-width:560px){.option-grid{grid-template-columns:1fr;}}
+  .option-card{
+    border:1px solid var(--line); border-radius:10px; padding:16px; cursor:pointer;
+    transition:border-color .15s, background .15s; background:transparent;
+  }
+  .option-card:hover{border-color:var(--porcelain-dim);}
+  .option-card.selected{border-color:var(--cyan); background:rgba(14,140,124,0.08);}
+  .option-card h4{font-size:0.95rem; margin-bottom:4px;}
+  .option-card span{font-size:0.8rem; color:var(--porcelain-dim);}
+
+  .dropzone{
+    border:1.5px dashed var(--porcelain-dim); border-radius:10px; padding:36px 20px;
+    text-align:center; margin-bottom:28px; transition:border-color .15s, background .15s; cursor:pointer;
+  }
+  .dropzone:hover, .dropzone.filled{border-color:var(--cyan); background:rgba(14,140,124,0.05);}
+  .dropzone p{color:var(--porcelain-dim); font-size:0.88rem;}
+  .dropzone .file-name{color:var(--cyan); font-family:'IBM Plex Mono'; font-size:0.85rem; margin-top:8px;}
+  #fileInput{display:none;}
+
+  .lab-list{display:flex; flex-direction:column; gap:10px; margin-bottom:28px;}
+  .lab-row{
+    display:flex; justify-content:space-between; align-items:center;
+    border:1px solid var(--line); border-radius:10px; padding:14px 18px; cursor:pointer;
+  }
+  .lab-row:hover{border-color:var(--porcelain-dim);}
+  .lab-row.selected{border-color:var(--cyan); background:rgba(14,140,124,0.08);}
+  .lab-row .name{font-weight:600; font-size:0.95rem;}
+  .lab-row .meta{color:var(--porcelain-dim); font-size:0.8rem;}
+  .lab-row .price{font-family:'IBM Plex Mono'; color:var(--cyan); font-size:0.9rem;}
+
+  .pay-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px;}
+  @media(max-width:560px){.pay-grid{grid-template-columns:1fr;}}
+
+  .summary-row{display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--line); font-size:0.9rem;}
+  .summary-row.total{font-weight:700; font-size:1.05rem; border-bottom:none; padding-top:16px;}
+  .summary-row span:first-child{color:var(--porcelain-dim);}
+
+  .demo-actions{display:flex; justify-content:space-between; margin-top:32px;}
+  .btn-back{background:none; border:none; color:var(--porcelain-dim); cursor:pointer; font-size:0.9rem;}
+  .btn-back:hover{color:var(--porcelain);}
+
+  .track-item{display:flex; gap:16px; padding:14px 0;}
+  .track-dot{width:12px; height:12px; border-radius:50%; background:var(--porcelain-dim); margin-top:4px; flex-shrink:0;}
+  .track-item.done .track-dot{background:var(--cyan); box-shadow:0 0 10px var(--cyan);}
+  .track-item h4{font-size:0.95rem;}
+  .track-item p{color:var(--porcelain-dim); font-size:0.82rem;}
+  .order-id{font-family:'IBM Plex Mono'; color:var(--cyan); font-size:1.1rem; margin-bottom:24px;}
+
+  /* MARKETPLACE */
+  .region-tabs{display:flex; gap:10px; margin-bottom:28px; flex-wrap:wrap;}
+  .region-tab{
+    border:1px solid var(--line); background:transparent; color:var(--porcelain-dim);
+    padding:9px 16px; border-radius:20px; font-size:0.85rem; cursor:pointer;
+  }
+  .region-tab.active{border-color:var(--cyan); color:var(--cyan);}
+  .lab-cards{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+  @media(max-width:900px){.lab-cards{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:600px){.lab-cards{grid-template-columns:1fr;}}
+  .lab-card{border:1px solid var(--line); border-radius:12px; padding:22px; background:var(--ink-2);}
+  .lab-card .tag{font-family:'IBM Plex Mono'; font-size:0.7rem; color:var(--cyan); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px; display:block;}
+  .lab-card h3{font-size:1.05rem; margin-bottom:6px;}
+  .lab-card p{color:var(--porcelain-dim); font-size:0.85rem; margin-bottom:14px;}
+  .lab-card .stat-row{display:flex; justify-content:space-between; font-size:0.8rem; color:var(--porcelain-dim); border-top:1px solid var(--line); padding-top:12px;}
+  .lab-card .stat-row b{color:var(--porcelain);}
+
+  /* RATINGS */
+  .rating-row{display:flex; align-items:center; gap:8px; margin-bottom:14px; flex-wrap:wrap;}
+  .stars{color:var(--porcelain-dim); letter-spacing:1px; font-size:0.95rem; position:relative; display:inline-block;}
+  .stars::before{
+    content:"★★★★★"; position:absolute; top:0; left:0; overflow:hidden; white-space:nowrap;
+    width:var(--fill,0%); color:var(--amber);
+  }
+  .stars.small{font-size:0.8rem;}
+  .rating-num{font-family:'IBM Plex Mono'; font-size:0.85rem; color:var(--porcelain);}
+  .rating-toggle{
+    background:none; border:none; color:var(--cyan); font-size:0.78rem; cursor:pointer;
+    text-decoration:underline; text-underline-offset:3px;
+  }
+  .rating-row .rating-toggle:nth-of-type(1){margin-left:auto;}
+  .reviews{margin-bottom:14px; display:flex; flex-direction:column; gap:10px;}
+  .review{border-top:1px solid var(--line); padding-top:10px;}
+  .review-head{display:flex; align-items:center; gap:8px; margin-bottom:4px; font-size:0.82rem; color:var(--porcelain-dim);}
+  .review p{color:var(--porcelain-dim); font-size:0.84rem;}
+
+  /* PORTFOLIO */
+  .portfolio{margin-bottom:14px;}
+  .portfolio-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:6px;}
+  .portfolio-grid img{width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:6px; display:block; background:var(--line);}
+  .portfolio-caption{font-size:0.72rem; color:var(--porcelain-dim); margin-top:8px;}
+  .portfolio-preview{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:-8px 0 22px;}
+  .portfolio-preview img{width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:8px; border:1px solid var(--line);}
+
+  /* RATE ORDER (post-delivery) */
+  .rate-box{border-top:1px solid var(--line); margin-top:24px; padding-top:24px;}
+  .star-picker{display:flex; gap:6px; margin-bottom:16px;}
+  .star-picker span{font-size:1.6rem; color:var(--porcelain-dim); cursor:pointer; transition:color .1s;}
+  .star-picker span.active{color:var(--amber);}
+  .rate-textarea{
+    width:100%; background:var(--ink-2); border:1px solid var(--line); color:var(--porcelain);
+    border-radius:8px; padding:12px 14px; font-size:0.88rem; font-family:'Inter'; min-height:80px; margin-bottom:16px; resize:vertical;
+  }
+  .rate-textarea:focus{outline:none; border-color:var(--cyan);}
+  .rate-sent{color:var(--cyan); font-size:0.88rem; display:none;}
+
+  /* CHAT WIDGET */
+  .chat-fab{
+    position:fixed; right:24px; bottom:24px; z-index:80;
+    width:56px; height:56px; border-radius:50%; background:var(--cyan); color:var(--ink);
+    border:none; cursor:pointer; box-shadow:0 6px 20px rgba(0,0,0,0.35);
+    display:flex; align-items:center; justify-content:center; font-size:1.4rem;
+  }
+  .chat-fab .badge{
+    position:absolute; top:-4px; right:-4px; background:var(--amber); color:var(--ink);
+    font-family:'IBM Plex Mono'; font-size:0.68rem; width:18px; height:18px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-weight:700;
+  }
+  .chat-panel{
+    position:fixed; right:24px; bottom:92px; z-index:80;
+    width:340px; max-width:calc(100vw - 48px); height:440px;
+    background:var(--ink-2); border:1px solid var(--line); border-radius:16px;
+    display:flex; flex-direction:column; overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,0.5);
+  }
+  .chat-head{
+    padding:16px 18px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px;
+  }
+  .chat-avatar{width:32px; height:32px; border-radius:50%; background:var(--cyan-dim); display:flex; align-items:center; justify-content:center; font-family:'Space Grotesk'; font-weight:700; font-size:0.85rem; color:var(--cyan);}
+  .chat-head-info{flex-grow:1;}
+  .chat-head-info .name{font-weight:600; font-size:0.9rem;}
+  .chat-head-info .status{font-size:0.72rem; color:var(--cyan); display:flex; align-items:center; gap:5px;}
+  .chat-head-info .status::before{content:''; width:7px; height:7px; border-radius:50%; background:var(--cyan);}
+  .chat-close{background:none; border:none; color:var(--porcelain-dim); font-size:1.2rem; cursor:pointer; line-height:1;}
+  .chat-messages{flex-grow:1; overflow-y:auto; padding:16px 18px; display:flex; flex-direction:column; gap:10px;}
+  .msg{max-width:78%; padding:9px 13px; border-radius:12px; font-size:0.85rem; line-height:1.4;}
+  .msg.them{background:var(--ink); border:1px solid var(--line); align-self:flex-start; border-bottom-left-radius:2px;}
+  .msg.me{background:var(--cyan); color:var(--ink); align-self:flex-end; border-bottom-right-radius:2px;}
+  .msg-time{font-family:'IBM Plex Mono'; font-size:0.65rem; color:var(--porcelain-dim); margin-top:4px; align-self:flex-start;}
+  .msg.me + .msg-time{align-self:flex-end;}
+  .chat-input-row{display:flex; gap:8px; padding:12px; border-top:1px solid var(--line);}
+  .chat-input-row input{
+    flex-grow:1; background:var(--ink); border:1px solid var(--line); color:var(--porcelain);
+    border-radius:20px; padding:10px 16px; font-size:0.85rem; font-family:'Inter';
+  }
+  .chat-input-row input:focus{outline:none; border-color:var(--cyan);}
+  .chat-send{
+    width:38px; height:38px; border-radius:50%; background:var(--cyan); color:var(--ink);
+    border:none; cursor:pointer; font-size:1rem; flex-shrink:0;
+  }
+  .chat-send:disabled{opacity:0.5; cursor:default;}
+  .typing{font-size:0.75rem; color:var(--porcelain-dim); font-style:italic; align-self:flex-start; display:none;}
+
+  /* PARTNER / CTA */
+  .partner{
+    background:linear-gradient(135deg, var(--ink-2), var(--ink));
+    border:1px solid var(--line); border-radius:20px; padding:56px; text-align:center;
+  }
+  .partner h2{font-size:clamp(1.6rem,3.5vw,2.2rem); margin-bottom:16px;}
+  .partner p{color:var(--porcelain-dim); max-width:520px; margin:0 auto 28px;}
+
+  /* PRICING PLANS */
+  .plan-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  @media(max-width:900px){.plan-grid{grid-template-columns:1fr;}}
+  .plan-card{
+    border:1px solid var(--line); border-radius:14px; padding:28px; background:var(--ink-2);
+    display:flex; flex-direction:column;
+  }
+  .plan-card.featured{border-color:var(--cyan); background:rgba(14,140,124,0.06); position:relative;}
+  .plan-card .tag{font-family:'IBM Plex Mono'; font-size:0.7rem; color:var(--cyan); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px; display:block;}
+  .plan-price{font-family:'Space Grotesk'; font-size:2rem; font-weight:600; margin-bottom:20px;}
+  .plan-price span{font-family:'Inter'; font-size:0.95rem; color:var(--porcelain-dim); font-weight:400;}
+  .plan-card ul{list-style:none; margin-bottom:28px; flex-grow:1;}
+  .plan-card li{color:var(--porcelain-dim); font-size:0.88rem; padding:7px 0; border-bottom:1px solid var(--line);}
+  .plan-card li:last-child{border-bottom:none;}
+  .plan-btn{width:100%;}
+
+  .text-input{
+    width:100%; background:var(--ink-2); border:1px solid var(--line); color:var(--porcelain);
+    border-radius:8px; padding:12px 14px; font-size:0.9rem; font-family:'Inter'; margin-bottom:22px;
+  }
+  .text-input:focus{outline:none; border-color:var(--cyan);}
+
+  /* LAB REVIEW STATUS */
+  .review-status{text-align:center; padding:20px 0 8px;}
+  .status-pill{
+    display:inline-block; font-family:'IBM Plex Mono'; font-size:0.72rem; text-transform:uppercase;
+    letter-spacing:0.08em; padding:6px 14px; border-radius:20px; margin-bottom:20px;
+  }
+  .status-pill.pending{background:rgba(185,116,28,0.15); color:var(--amber); border:1px solid var(--amber);}
+  .status-pill.approved{background:rgba(14,140,124,0.15); color:var(--cyan); border:1px solid var(--cyan);}
+  .review-status h3{font-size:1.2rem; margin-bottom:12px;}
+  .review-status p{color:var(--porcelain-dim); font-size:0.9rem; max-width:440px; margin:0 auto 24px;}
+
+  /* ADMIN PANEL */
+  .admin-stats{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px;}
+  @media(max-width:760px){.admin-stats{grid-template-columns:repeat(2,1fr);}}
+  .admin-stat{border:1px solid var(--line); border-radius:12px; padding:20px; background:var(--ink-2);}
+  .admin-stat .num{display:block; font-family:'Space Grotesk'; font-size:1.7rem; font-weight:600; color:var(--cyan);}
+  .admin-stat .lbl{font-size:0.8rem; color:var(--porcelain-dim);}
+
+  .admin-panel{border:1px solid var(--line); border-radius:14px; overflow:hidden; background:var(--ink-2);}
+  .admin-tabs{display:flex; border-bottom:1px solid var(--line);}
+  .admin-tab{
+    flex:1; background:none; border:none; color:var(--porcelain-dim); padding:16px; cursor:pointer;
+    font-size:0.85rem; position:relative; font-family:'Inter';
+  }
+  .admin-tab.active{color:var(--porcelain);}
+  .admin-tab.active::after{content:''; position:absolute; bottom:-1px; left:0; right:0; height:2px; background:var(--cyan);}
+  .admin-tab .count{
+    font-family:'IBM Plex Mono'; font-size:0.68rem; background:var(--ink); border:1px solid var(--line);
+    border-radius:10px; padding:1px 7px; margin-left:6px;
+  }
+  .admin-body{padding:24px; overflow-x:auto;}
+  .admin-table{width:100%; border-collapse:collapse; font-size:0.85rem;}
+  .admin-table th{
+    text-align:left; color:var(--porcelain-dim); font-weight:500; font-size:0.75rem;
+    text-transform:uppercase; letter-spacing:0.05em; padding:0 12px 12px; border-bottom:1px solid var(--line);
+  }
+  .admin-table td{padding:14px 12px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  .admin-table tr:last-child td{border-bottom:none;}
+  .doc-link{color:var(--cyan); text-decoration:underline; text-underline-offset:3px; cursor:pointer; font-size:0.8rem; background:none; border:none; font-family:'Inter';}
+  .row-actions{display:flex; gap:8px;}
+  .btn-approve, .btn-reject, .btn-suspend{
+    border:none; border-radius:6px; padding:7px 12px; font-size:0.78rem; cursor:pointer; font-weight:600;
+  }
+  .btn-approve{background:var(--cyan); color:var(--ink);}
+  .btn-reject{background:transparent; border:1px solid var(--line); color:var(--porcelain-dim);}
+  .btn-reject:hover{border-color:#e05a4e; color:#e05a4e;}
+  .btn-suspend{background:transparent; border:1px solid var(--line); color:var(--porcelain-dim);}
+  .btn-suspend:hover{border-color:var(--amber); color:var(--amber);}
+  .admin-badge{
+    font-family:'IBM Plex Mono'; font-size:0.7rem; padding:3px 9px; border-radius:10px;
+    text-transform:uppercase; letter-spacing:0.04em;
+  }
+  .admin-badge.active{background:rgba(14,140,124,0.15); color:var(--cyan);}
+  .admin-badge.suspended{background:rgba(185,116,28,0.15); color:var(--amber);}
+  .admin-empty{color:var(--porcelain-dim); font-size:0.88rem; text-align:center; padding:24px 0;}
+
+  footer{border-top:1px solid var(--line); padding:40px 24px; color:var(--porcelain-dim); font-size:0.85rem;}
+  .footer-wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px;}
+
+  .hidden{display:none !important;}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="logo"><span class="logo-dot"></span>Protex</div>
+    <div class="nav-links">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#pedido">Fazer pedido</a>
+      <a href="#laboratorios">Laboratórios</a>
+      <a href="#planos">Planos para laboratórios</a>
+      <a href="#admin">Painel Adm</a>
+    </div>
+    <button class="nav-cta" onclick="document.getElementById('pedido').scrollIntoView()">Novo pedido</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">Marketplace de prótese digital</div>
+      <h1>Do arquivo digital <em>ao sorriso pronto</em>, sem sair do consultório.</h1>
+      <p>Envie o escaneamento, escolha o laboratório mais próximo ou mais recomendado da sua região, acompanhe a produção e receba a peça pronta na sua porta. Como pedir comida — só que é uma faceta de porcelana.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('pedido').scrollIntoView()">Enviar um caso agora</button>
+        <button class="btn-ghost" onclick="document.getElementById('laboratorios').scrollIntoView()">Ver laboratórios parceiros</button>
+      </div>
+    </div>
+    <div class="scan-box">
+      <svg class="tooth-svg" viewBox="0 0 100 120">
+        <path class="tooth-outline" d="M50 8 C20 8 12 30 14 50 C16 72 26 108 38 112 C46 114 44 78 50 78 C56 78 54 114 62 112 C74 108 84 72 86 50 C88 30 80 8 50 8 Z"/>
+        <path class="tooth-solid" d="M50 8 C20 8 12 30 14 50 C16 72 26 108 38 112 C46 114 44 78 50 78 C56 78 54 114 62 112 C74 108 84 72 86 50 C88 30 80 8 50 8 Z"/>
+      </svg>
+      <div class="scan-line"></div>
+      <div class="scan-caption">
+        <span>ARQUIVO.STL</span>
+        <span>PROCESSANDO…</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="steps" id="como-funciona">
+  <div class="wrap section-head">
+    <div class="section-eyebrow">Como funciona</div>
+    <h2>Quatro passos entre a boca do paciente e a peça na sua mão</h2>
+  </div>
+  <div class="steps-grid">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Envie o caso digital</h3>
+      <p>Suba o arquivo do scanner intraoral (STL, PLY ou DICOM) direto pelo site, sem moldeira física.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Escolha o laboratório</h3>
+      <p>Compare prazo, especialidade e nota de laboratórios parceiros na sua região ou em qualquer estado do país.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>Pague com segurança</h3>
+      <p>Pix, cartão ou boleto, com valor travado antes da produção começar.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <h3>Acompanhe e receba</h3>
+      <p>Notificações em cada etapa da produção até a peça chegar embalada e rastreada no consultório.</p>
+    </div>
+  </div>
+</section>
+
+<section class="demo" id="pedido">
+  <div class="wrap">
+    <div class="section-head left">
+      <div class="section-eyebrow">Simulação do pedido</div>
+      <h2>Veja como fica o fluxo de um pedido real</h2>
+      <p>Este é um protótipo interativo — nenhum arquivo é enviado de verdade e nenhum pagamento é processado.</p>
+    </div>
+
+    <div class="demo-panel">
+      <div class="demo-tabs">
+        <div class="demo-tab active" data-tab="1"><span class="n">1</span>Caso</div>
+        <div class="demo-tab" data-tab="2"><span class="n">2</span>Laboratório</div>
+        <div class="demo-tab" data-tab="3"><span class="n">3</span>Pagamento</div>
+        <div class="demo-tab" data-tab="4"><span class="n">4</span>Acompanhamento</div>
+      </div>
+
+      <div class="demo-body">
+
+        <!-- STEP 1 -->
+        <div class="demo-step" id="step-1">
+          <span class="field-label">Tipo de trabalho</span>
+          <div class="option-grid" id="workTypes">
+            <div class="option-card" data-price="480" data-name="Lente de contato (unid.)"><h4>Lente de contato</h4><span>Por unidade · cerâmica</span></div>
+            <div class="option-card" data-price="620" data-name="Coroa em zircônia"><h4>Coroa em zircônia</h4><span>Monolítica ou estratificada</span></div>
+            <div class="option-card" data-price="890" data-name="Protocolo/prótese total"><h4>Protocolo total</h4><span>Implantossuportada</span></div>
+          </div>
+          <span class="field-label">Arquivo digital do caso</span>
+          <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+            <p>Arraste o arquivo .STL/.PLY aqui ou clique para simular o envio</p>
+            <div class="file-name" id="fileName"></div>
+          </div>
+          <input type="file" id="fileInput">
+          <div class="demo-actions">
+            <span></span>
+            <button class="btn-primary" onclick="goStep(2)">Continuar</button>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="demo-step hidden" id="step-2">
+          <span class="field-label">Laboratórios disponíveis para o seu tipo de caso</span>
+          <div class="lab-list" id="labList">
+            <div class="lab-row" data-lab="Ateliê Digital SP" data-days="3">
+              <div><div class="name">Ateliê Digital SP</div><div class="meta">São Paulo, SP · ★ 4.9 · zircônia e estética</div></div>
+              <div class="price">3 dias úteis</div>
+            </div>
+            <div class="lab-row" data-lab="LabOral Sul" data-days="4">
+              <div><div class="name">LabOral Sul</div><div class="meta">Curitiba, PR · ★ 4.7 · protocolo e implante</div></div>
+              <div class="price">4 dias úteis</div>
+            </div>
+            <div class="lab-row" data-lab="Prótese Express NE" data-days="2">
+              <div><div class="name">Prótese Express NE</div><div class="meta">Recife, PE · ★ 4.8 · entrega expressa</div></div>
+              <div class="price">2 dias úteis</div>
+            </div>
+          </div>
+          <div class="demo-actions">
+            <button class="btn-back" onclick="goStep(1)">← Voltar</button>
+            <button class="btn-primary" onclick="goStep(3)">Continuar</button>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="demo-step hidden" id="step-3">
+          <span class="field-label">Forma de pagamento</span>
+          <div class="pay-grid" id="payTypes">
+            <div class="option-card" data-name="Pix"><h4>Pix</h4><span>Aprovação imediata</span></div>
+            <div class="option-card" data-name="Cartão de crédito"><h4>Cartão de crédito</h4><span>Em até 6x</span></div>
+            <div class="option-card" data-name="Boleto"><h4>Boleto</h4><span>Compensação em 2 dias</span></div>
+          </div>
+          <div class="summary-row"><span>Trabalho</span><span id="sumWork">—</span></div>
+          <div class="summary-row"><span>Laboratório</span><span id="sumLab">—</span></div>
+          <div class="summary-row"><span>Taxa da plataforma</span><span id="sumFee">—</span></div>
+          <div class="summary-row total"><span>Total</span><span id="sumTotal">—</span></div>
+          <div class="demo-actions">
+            <button class="btn-back" onclick="goStep(2)">← Voltar</button>
+            <button class="btn-primary" id="confirmOrderBtn" onclick="confirmOrder()">Confirmar pedido</button>
+          </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="demo-step hidden" id="step-4">
+          <div class="order-id" id="orderId">PEDIDO #—</div>
+          <button class="btn-ghost" style="margin-bottom:20px;" onclick="openChat()">💬 Falar com o laboratório</button>
+          <div class="track-item done">
+            <div class="track-dot"></div>
+            <div><h4>Pedido recebido</h4><p>Pagamento confirmado e caso enviado ao laboratório.</p></div>
+          </div>
+          <div class="track-item done">
+            <div class="track-dot"></div>
+            <div><h4>Em produção</h4><p>Laboratório iniciou a fresagem/estratificação da peça.</p></div>
+          </div>
+          <div class="track-item">
+            <div class="track-dot"></div>
+            <div><h4>Controle de qualidade</h4><p>Conferência de encaixe, cor e acabamento.</p></div>
+          </div>
+          <div class="track-item">
+            <div class="track-dot"></div>
+            <div><h4>A caminho do consultório</h4><p>Envio com rastreio até a sua clínica.</p></div>
+          </div>
+          <div class="rate-box">
+            <span class="field-label">Avalie o laboratório depois de receber a peça</span>
+            <div class="star-picker" id="starPicker">
+              <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+            </div>
+            <textarea class="rate-textarea" id="rateComment" placeholder="Como foi o encaixe, a cor e o prazo de entrega?"></textarea>
+            <button class="btn-primary" id="submitRating" onclick="submitRating()">Enviar avaliação</button>
+            <p class="rate-sent" id="rateSent">✓ Avaliação enviada — obrigado, isso ajuda outros dentistas a escolher o laboratório.</p>
+          </div>
+          <div class="demo-actions">
+            <span></span>
+            <button class="btn-ghost" onclick="resetDemo()">Simular novo pedido</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="laboratorios">
+  <div class="wrap">
+    <div class="section-head left">
+      <div class="section-eyebrow">Rede de laboratórios</div>
+      <h2>Laboratórios parceiros por região</h2>
+      <p>Cada laboratório mantém seu próprio catálogo, prazos e nota — a plataforma cuida do pedido, pagamento e rastreio.</p>
+    </div>
+    <div class="region-tabs">
+      <button class="region-tab active" data-region="todas">Todas as regiões</button>
+      <button class="region-tab" data-region="sudeste">Sudeste</button>
+      <button class="region-tab" data-region="sul">Sul</button>
+      <button class="region-tab" data-region="nordeste">Nordeste</button>
+    </div>
+    <div class="lab-cards" id="labCards">
+      <div class="lab-card" data-region="sudeste" data-address="Rua Augusta, 1200 - Consolação, São Paulo - SP" data-time="3 dias úteis · 420 km">
+        <span class="tag">Sudeste</span>
+        <h3>Ateliê Digital SP</h3>
+        <p>Especialista em estética e lentes de contato dental. Capacidade para 40 casos/semana.</p>
+        <button class="loc-btn" onclick="openMap(this)">📍 Ver localização</button>
+        <div class="rating-row">
+          <span class="stars" data-score="4.9">★★★★★</span>
+          <span class="rating-num">4.9</span>
+          <button class="rating-toggle" data-target="reviews">62 avaliações</button>
+          <button class="rating-toggle" data-target="portfolio">Ver portfólio</button>
+        </div>
+        <div class="portfolio hidden">
+          <div class="portfolio-grid" data-seed="101"></div>
+        </div>
+        <div class="reviews hidden">
+          <div class="review"><div class="review-head"><span class="stars small">★★★★★</span><span>Dra. Camila Nogueira</span></div><p>Encaixe perfeito, cor exatamente como pedi na foto.</p></div>
+          <div class="review"><div class="review-head"><span class="stars small">★★★★★</span><span>Dr. Henrique Sato</span></div><p>Prazo cumprido à risca, embalagem muito cuidadosa.</p></div>
+          <div class="review"><div class="review-head"><span class="stars small">★★★★☆</span><span>Dra. Paula Menezes</span></div><p>Ótimo acabamento, só demorou um dia a mais que o combinado.</p></div>
+        </div>
+        <div class="stat-row"><span>Prazo médio</span><b>3 dias</b></div>
+      </div>
+      <div class="lab-card" data-region="sul">
+        <span class="tag">Sul</span>
+        <h3>LabOral Sul</h3>
+        <p>Foco em protocolos implantossuportados e prótese total, com CAD/CAM próprio.</p>
+        <div class="rating-row">
+          <span class="stars" data-score="4.7">★★★★★</span>
+          <span class="rating-num">4.7</span>
+          <button class="rating-toggle" data-target="reviews">38 avaliações</button>
+          <button class="rating-toggle" data-target="portfolio">Ver portfólio</button>
+        </div>
+        <div class="portfolio hidden">
+          <div class="portfolio-grid" data-seed="202"></div>
+        </div>
+        <div class="reviews hidden">
+          <div class="review"><div class="review-head"><span class="stars small">★★★★★</span><span>Dr. Rafael Toledo</span></div><p>Protocolo ficou com ótima estabilidade, paciente muito satisfeito.</p></div>
+          <div class="review"><div class="review-head"><span class="stars small">★★★★☆</span><span>Dra. Beatriz Lima</span></div><p>Comunicação boa durante a produção, recomendo.</p></div>
+        </div>
+        <div class="stat-row"><span>Prazo médio</span><b>4 dias</b></div>
+      </div>
+      <div class="lab-card" data-region="nordeste">
+        <span class="tag">Nordeste</span>
+        <h3>Prótese Express NE</h3>
+        <p>Entrega expressa regional e forte atuação em zircônia monolítica.</p>
+        <div class="rating-row">
+          <span class="stars" data-score="4.8">★★★★★</span>
+          <span class="rating-num">4.8</span>
+          <button class="rating-toggle" data-target="reviews">51 avaliações</button>
+          <button class="rating-toggle" data-target="portfolio">Ver portfólio</button>
+        </div>
+        <div class="portfolio hidden">
+          <div class="portfolio-grid" data-seed="303"></div>
+        </div>
+        <div class="reviews hidden">
+          <div class="review"><div class="review-head"><span class="stars small">★★★★★</span><span>Dra. Fernanda Costa</span></div><p>Mais rápido que qualquer laboratório físico que já usei.</p></div>
+          <div class="review"><div class="review-head"><span class="stars small">★★★★★</span><span>Dr. Igor Almeida</span></div><p>Zircônia com ótima translucidez, aprovado pelo paciente.</p></div>
+        </div>
+        <div class="stat-row"><span>Prazo médio</span><b>2 dias</b></div>
+      </div>
+      <div class="lab-card" data-region="sudeste">
+        <span class="tag">Sudeste</span>
+        <h3>Zircon Lab RJ</h3>
+        <p>Estrutura própria de fresagem e forno de sinterização, casos complexos de estética.</p>
+        <div class="rating-row">
+          <span class="stars" data-score="4.6">★★★★★</span>
+          <span class="rating-num">4.6</span>
+          <button class="rating-toggle" data-target="reviews">24 avaliações</button>
+          <button class="rating-toggle" data-target="portfolio">Ver portfólio</button>
+        </div>
+        <div class="portfolio hidden">
+          <div class="portfolio-grid" data-seed="404"></div>
+        </div>
+        <div class="reviews hidden">
+          <div class="review"><div class="review-head"><span class="stars small">★★★★☆</span><span>Dra. Marina Ruiz</span></div><p>Bom resultado estético, canal de suporte respondeu rápido.</p></div>
+        </div>
+        <div class="stat-row"><span>Prazo médio</span><b>3 dias</b></div>
+      </div>
+      <div class="lab-card" data-region="sul">
+        <span class="tag">Sul</span>
+        <h3>Digital Prótese POA</h3>
+        <p>Parceria com clínicas de ortodontia para casos combinados.</p>
+        <div class="rating-row">
+          <span class="stars" data-score="4.3">★★★★★</span>
+          <span class="rating-num">4.3</span>
+          <button class="rating-toggle" data-target="reviews">17 avaliações</button>
+          <button class="rating-toggle" data-target="portfolio">Ver portfólio</button>
+        </div>
+        <div class="portfolio hidden">
+          <div class="portfolio-grid" data-seed="505"></div>
+        </div>
+        <div class="reviews hidden">
+          <div class="review"><div class="review-head"><span class="stars small">★★★★☆</span><span>Dr. Tiago Ferreira</span></div><p>Bom custo-benefício para casos combinados com ortodontia.</p></div>
+        </div>
+        <div class="stat-row"><span>Prazo médio</span><b>5 dias</b></div>
+      </div>
+      <div class="lab-card" data-region="nordeste">
+        <span class="tag">Nordeste</span>
+        <h3>Sorriso CAD/CAM BA</h3>
+        <p>Laboratório de médio porte com foco em lentes e facetas.</p>
+        <div class="rating-row">
+          <span class="stars" data-score="4.5">★★★★★</span>
+          <span class="rating-num">4.5</span>
+          <button class="rating-toggle" data-target="reviews">29 avaliações</button>
+          <button class="rating-toggle" data-target="portfolio">Ver portfólio</button>
+        </div>
+        <div class="portfolio hidden">
+          <div class="portfolio-grid" data-seed="606"></div>
+        </div>
+        <div class="reviews hidden">
+          <div class="review"><div class="review-head"><span class="stars small">★★★★★</span><span>Dra. Juliana Prado</span></div><p>Lentes muito naturais, dentista e paciente aprovaram.</p></div>
+        </div>
+        <div class="stat-row"><span>Prazo médio</span><b>3 dias</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="planos">
+  <div class="wrap">
+    <div class="section-head left">
+      <div class="section-eyebrow">Para laboratórios</div>
+      <h2>Assine um plano e comece a receber pedidos</h2>
+      <p>Todo laboratório parceiro paga uma mensalidade fixa para operar na plataforma — sem comissão extra sobre cada pedido além da taxa já mostrada ao dentista.</p>
+    </div>
+
+    <div class="plan-grid" id="planGrid">
+      <div class="plan-card" data-plan="Básico" data-price="197">
+        <span class="tag">Básico</span>
+        <div class="plan-price">R$ 197<span>/mês</span></div>
+        <ul>
+          <li>Até 15 pedidos por mês</li>
+          <li>Atuação em 1 região</li>
+          <li>Painel de pedidos</li>
+          <li>Suporte por e-mail</li>
+        </ul>
+        <button class="btn-ghost plan-btn">Assinar Básico</button>
+      </div>
+      <div class="plan-card featured" data-plan="Profissional" data-price="397">
+        <span class="tag">Mais escolhido</span>
+        <div class="plan-price">R$ 397<span>/mês</span></div>
+        <ul>
+          <li>Pedidos ilimitados</li>
+          <li>Atuação em até 3 regiões</li>
+          <li>Destaque na busca de laboratórios</li>
+          <li>Suporte prioritário</li>
+        </ul>
+        <button class="btn-primary plan-btn">Assinar Profissional</button>
+      </div>
+      <div class="plan-card" data-plan="Enterprise" data-price="0">
+        <span class="tag">Enterprise</span>
+        <div class="plan-price">Sob consulta</div>
+        <ul>
+          <li>Múltiplas unidades / filiais</li>
+          <li>Cobertura nacional</li>
+          <li>Gerente de conta dedicado</li>
+          <li>Integração com sistema próprio</li>
+        </ul>
+        <button class="btn-ghost plan-btn">Falar com vendas</button>
+      </div>
+    </div>
+
+    <div class="demo-panel" id="labOnboarding" style="margin-top:48px;">
+      <div class="demo-tabs">
+        <div class="demo-tab active" data-labtab="1"><span class="n">1</span>Laboratório</div>
+        <div class="demo-tab" data-labtab="2"><span class="n">2</span>Análise</div>
+        <div class="demo-tab" data-labtab="3"><span class="n">3</span>Plano</div>
+        <div class="demo-tab" data-labtab="4"><span class="n">4</span>Assinatura</div>
+        <div class="demo-tab" data-labtab="5"><span class="n">5</span>Painel</div>
+      </div>
+      <div class="demo-body">
+
+        <!-- LAB STEP 1 -->
+        <div class="lab-step" id="lab-step-1">
+          <span class="field-label">Nome do laboratório</span>
+          <input class="text-input" id="labName" type="text" placeholder="Ex: Ateliê Digital SP">
+          <span class="field-label">CNPJ</span>
+          <input class="text-input" id="labCnpj" type="text" placeholder="00.000.000/0001-00">
+          <span class="field-label">Responsável técnico (protético) e CRO/registro</span>
+          <input class="text-input" id="labTech" type="text" placeholder="Ex: João Pereira — CRO-SP 12345">
+          <span class="field-label">Região de atendimento</span>
+          <select class="text-input" id="labRegion">
+            <option value="sudeste">Sudeste</option>
+            <option value="sul">Sul</option>
+            <option value="nordeste">Nordeste</option>
+            <option value="norte">Norte</option>
+            <option value="centro-oeste">Centro-Oeste</option>
+          </select>
+          <span class="field-label">Especialidade principal</span>
+          <select class="text-input" id="labSpecialty">
+            <option>Lentes de contato / facetas</option>
+            <option>Coroas em zircônia</option>
+            <option>Protocolo / prótese total</option>
+            <option>Ortodontia digital</option>
+          </select>
+          <span class="field-label">Documentos (alvará sanitário, contrato social, comprovante do responsável técnico)</span>
+          <div class="dropzone" id="labDropzone" onclick="document.getElementById('labFileInput').click()">
+            <p>Clique para simular o envio dos documentos exigidos</p>
+            <div class="file-name" id="labFileName"></div>
+          </div>
+          <input type="file" id="labFileInput" style="display:none;" multiple>
+
+          <span class="field-label">Fotos de trabalhos entregues (opcional, aparece no seu portfólio para os dentistas)</span>
+          <div class="dropzone" id="portfolioDropzone" onclick="document.getElementById('portfolioInput').click()">
+            <p>Clique para adicionar fotos de peças já entregues</p>
+          </div>
+          <input type="file" id="portfolioInput" style="display:none;" multiple accept="image/*">
+          <div class="portfolio-preview" id="portfolioPreview"></div>
+          <div class="demo-actions">
+            <span></span>
+            <button class="btn-primary" onclick="submitForReview()">Enviar para análise</button>
+          </div>
+        </div>
+
+        <!-- LAB STEP 2: ANÁLISE -->
+        <div class="lab-step hidden" id="lab-step-2">
+          <div class="review-status" id="reviewPending">
+            <span class="status-pill pending">Em análise</span>
+            <h3>Estamos verificando os dados do laboratório</h3>
+            <p>Nossa equipe confere CNPJ, alvará sanitário e o registro do responsável técnico antes de liberar a compra de um plano. Isso costuma levar até <b>2 dias úteis</b>. Você recebe um aviso por e-mail assim que for aprovado.</p>
+            <button class="btn-ghost" onclick="simulateApproval()">Simular aprovação (uso só de demonstração)</button>
+          </div>
+          <div class="review-status hidden" id="reviewApproved">
+            <span class="status-pill approved">Aprovado</span>
+            <h3>Laboratório verificado com sucesso</h3>
+            <p>Agora seu laboratório pode assinar um plano e começar a receber pedidos.</p>
+            <div class="demo-actions">
+              <span></span>
+              <button class="btn-primary" onclick="goLabStep(3)">Escolher plano</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- LAB STEP 3 -->
+        <div class="lab-step hidden" id="lab-step-3">
+          <span class="field-label">Escolha o plano de assinatura</span>
+          <div class="option-grid" id="labPlanChoice">
+            <div class="option-card" data-plan="Básico" data-price="197"><h4>Básico</h4><span>R$ 197/mês · até 15 pedidos</span></div>
+            <div class="option-card" data-plan="Profissional" data-price="397"><h4>Profissional</h4><span>R$ 397/mês · ilimitado</span></div>
+            <div class="option-card" data-plan="Enterprise" data-price="0"><h4>Enterprise</h4><span>Sob consulta</span></div>
+          </div>
+          <div class="demo-actions">
+            <button class="btn-back" onclick="goLabStep(2)">← Voltar</button>
+            <button class="btn-primary" onclick="goLabStep(4)">Continuar</button>
+          </div>
+        </div>
+
+        <!-- LAB STEP 4 -->
+        <div class="lab-step hidden" id="lab-step-4">
+          <span class="field-label">Forma de pagamento da mensalidade</span>
+          <div class="pay-grid" id="labPayTypes">
+            <div class="option-card" data-name="Pix"><h4>Pix recorrente</h4><span>Cobrança automática mensal</span></div>
+            <div class="option-card" data-name="Cartão de crédito"><h4>Cartão de crédito</h4><span>Assinatura recorrente</span></div>
+            <div class="option-card" data-name="Boleto"><h4>Boleto</h4><span>Vencimento mensal</span></div>
+          </div>
+          <div class="summary-row"><span>Laboratório</span><span id="labSumName">—</span></div>
+          <div class="summary-row"><span>Plano</span><span id="labSumPlan">—</span></div>
+          <div class="summary-row total"><span>Mensalidade</span><span id="labSumTotal">—</span></div>
+          <div class="demo-actions">
+            <button class="btn-back" onclick="goLabStep(3)">← Voltar</button>
+            <button class="btn-primary" onclick="confirmLabSub()">Confirmar assinatura</button>
+          </div>
+        </div>
+
+        <!-- LAB STEP 5 -->
+        <div class="lab-step hidden" id="lab-step-5">
+          <div class="order-id" id="labActiveMsg">PLANO ATIVO</div>
+          <p style="color:var(--porcelain-dim); font-size:0.9rem; margin-bottom:24px;">Seu laboratório já aparece para dentistas na sua região. Veja como fica a fila de pedidos recebidos:</p>
+          <div class="lab-row" style="cursor:default;">
+            <div><div class="name">Dra. Camila Nogueira</div><div class="meta">Coroa em zircônia · recebido há 4 min</div></div>
+            <div class="price">Novo</div>
+          </div>
+          <div class="lab-row" style="cursor:default; margin-top:10px;">
+            <div><div class="name">Dr. Rafael Toledo</div><div class="meta">Lente de contato (2 unid.) · em produção</div></div>
+            <div class="price">Em produção</div>
+          </div>
+          <div class="lab-row" style="cursor:default; margin-top:10px;">
+            <div><div class="name">Dra. Beatriz Lima</div><div class="meta">Protocolo total · enviado</div></div>
+            <div class="price">Concluído</div>
+          </div>
+          <div class="demo-actions">
+            <span></span>
+            <button class="btn-ghost" onclick="resetLabDemo()">Simular novo cadastro</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="admin">
+  <div class="wrap">
+    <div class="section-head left">
+      <div class="section-eyebrow">Área interna</div>
+      <h2>Painel do administrador</h2>
+      <p>Onde a equipe da plataforma analisa a documentação enviada pelos laboratórios e decide quem pode operar no Protex.</p>
+    </div>
+
+    <div class="admin-stats">
+      <div class="admin-stat"><span class="num" id="statActive">3</span><span class="lbl">Laboratórios ativos</span></div>
+      <div class="admin-stat"><span class="num" id="statPending">2</span><span class="lbl">Aguardando análise</span></div>
+      <div class="admin-stat"><span class="num">184</span><span class="lbl">Dentistas cadastrados</span></div>
+      <div class="admin-stat"><span class="num">R$ 1.588</span><span class="lbl">Mensalidades no mês</span></div>
+    </div>
+
+    <div class="admin-panel">
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-atab="pending">Aguardando aprovação <span class="count" id="countPending">2</span></button>
+        <button class="admin-tab" data-atab="active">Ativos <span class="count" id="countActive">3</span></button>
+        <button class="admin-tab" data-atab="rejected">Reprovados <span class="count" id="countRejected">0</span></button>
+      </div>
+
+      <div class="admin-body">
+        <table class="admin-table" id="tablePending">
+          <thead><tr><th>Laboratório</th><th>Região</th><th>Especialidade</th><th>CNPJ</th><th>Documentos</th><th>Ação</th></tr></thead>
+          <tbody id="pendingBody"></tbody>
+        </table>
+        <table class="admin-table hidden" id="tableActive">
+          <thead><tr><th>Laboratório</th><th>Região</th><th>Plano</th><th>Nota</th><th>Status</th><th>Ação</th></tr></thead>
+          <tbody id="activeBody"></tbody>
+        </table>
+        <table class="admin-table hidden" id="tableRejected">
+          <thead><tr><th>Laboratório</th><th>Região</th><th>Motivo</th><th>Data</th></tr></thead>
+          <tbody id="rejectedBody"></tbody>
+        </table>
+        <p class="admin-empty hidden" id="emptyState">Nada por aqui no momento.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-wrap">
+    <div><strong>Protex</strong> — marketplace de prótese odontológica digital.</div>
+    <div>Protótipo de demonstração · sem processamento real de pagamentos ou arquivos.</div>
+  </div>
+</footer>
+
+<button class="chat-fab" id="chatFab" onclick="toggleChat()">
+  💬<span class="badge" id="chatBadge">1</span>
+</button>
+
+<div class="chat-panel hidden" id="chatPanel">
+  <div class="chat-head">
+    <div class="chat-avatar">AD</div>
+    <div class="chat-head-info">
+      <div class="name">Ateliê Digital SP</div>
+      <div class="status">online agora</div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="msg them">Oi doutor(a)! Recebemos o arquivo do caso #482913, já vamos iniciar a modelagem.</div>
+    <div class="msg them">Só confirmando: a cor de referência é A2, certo?</div>
+  </div>
+  <div class="typing" id="typingIndicator">Ateliê Digital SP está digitando…</div>
+  <div class="chat-input-row">
+    <input type="text" id="chatInput" placeholder="Escreva uma mensagem…" onkeydown="if(event.key==='Enter') sendChat()">
+    <button class="chat-send" onclick="sendChat()">➤</button>
+  </div>
+</div>
+
+<script>
+  // Work type selection
+  let selectedWork = null, selectedLab = null, selectedPay = null;
+  document.querySelectorAll('#workTypes .option-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      document.querySelectorAll('#workTypes .option-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedWork = {name:card.dataset.name, price:Number(card.dataset.price)};
+    });
+  });
+
+  // fake file upload
+  const dropzone = document.getElementById('dropzone');
+  const fileInput = document.getElementById('fileInput');
+  fileInput.addEventListener('change', ()=>{
+    if(fileInput.files.length){
+      document.getElementById('fileName').textContent = '✓ ' + fileInput.files[0].name;
+      dropzone.classList.add('filled');
+    }
+  });
+
+  // lab selection
+  document.querySelectorAll('.lab-row').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      document.querySelectorAll('.lab-row').forEach(r=>r.classList.remove('selected'));
+      row.classList.add('selected');
+      selectedLab = {name: row.dataset.lab, days: row.dataset.days};
+    });
+  });
+
+  // payment selection
+  document.querySelectorAll('#payTypes .option-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      document.querySelectorAll('#payTypes .option-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedPay = card.dataset.name;
+    });
+  });
+
+  function goStep(n){
+    if(n===2 && !selectedWork){ alert('Selecione o tipo de trabalho antes de continuar.'); return; }
+    if(n===3 && !selectedLab){ alert('Selecione um laboratório antes de continuar.'); return; }
+    document.querySelectorAll('.demo-step').forEach(s=>s.classList.add('hidden'));
+    document.getElementById('step-'+n).classList.remove('hidden');
+    document.querySelectorAll('.demo-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelector('.demo-tab[data-tab="'+n+'"]').classList.add('active');
+
+    if(n===3){
+      const fee = Math.round(selectedWork.price*0.12);
+      document.getElementById('sumWork').textContent = selectedWork.name + ' — R$ ' + selectedWork.price;
+      document.getElementById('sumLab').textContent = selectedLab.name;
+      document.getElementById('sumFee').textContent = 'R$ ' + fee;
+      document.getElementById('sumTotal').textContent = 'R$ ' + (selectedWork.price + fee);
+    }
+  }
+
+  function confirmOrder(){
+    if(!selectedPay){ alert('Selecione uma forma de pagamento.'); return; }
+    const btn = document.getElementById('confirmOrderBtn');
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Processando...';
+
+    const fee = Math.round(selectedWork.price*0.12);
+    const total = selectedWork.price + fee;
+
+    fetch('/api/create-preference', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        title: selectedWork.name + ' — ' + selectedLab.name,
+        price: total,
+        quantity: 1
+      })
+    })
+    .then(r => { if(!r.ok) throw new Error('API indisponível'); return r.json(); })
+    .then(data => {
+      const link = data.init_point || data.sandbox_init_point;
+      if(link){
+        window.location.href = link; // manda o dentista pro checkout real do Mercado Pago
+      } else {
+        throw new Error('Sem link de pagamento');
+      }
+    })
+    .catch(() => {
+      // Fallback: backend ainda não publicado (ex: só abrindo o HTML localmente) -> segue no modo demonstração
+      const id = Math.floor(100000 + Math.random()*900000);
+      document.getElementById('orderId').textContent = 'PEDIDO #' + id;
+      goStep(4);
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    });
+  }
+
+  function resetDemo(){
+    selectedWork = selectedLab = selectedPay = null;
+    document.querySelectorAll('.option-card, .lab-row').forEach(c=>c.classList.remove('selected'));
+    document.getElementById('fileName').textContent = '';
+    dropzone.classList.remove('filled');
+    fileInput.value = '';
+    chosenStars = 0;
+    document.querySelectorAll('#starPicker span').forEach(s=>s.classList.remove('active'));
+    document.getElementById('rateComment').value = '';
+    document.getElementById('rateSent').style.display = 'none';
+    document.getElementById('submitRating').disabled = false;
+    document.getElementById('submitRating').style.opacity = 1;
+    goStep(1);
+  }
+
+  // Pricing section plan buttons -> scroll to onboarding and preselect plan
+  let selectedLabPlan = null, selectedLabPay = null, labApproved = false;
+  document.querySelectorAll('.plan-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const card = btn.closest('.plan-card');
+      selectedLabPlan = {name: card.dataset.plan, price: Number(card.dataset.price)};
+      document.querySelectorAll('#labPlanChoice .option-card').forEach(c=>{
+        c.classList.toggle('selected', c.dataset.plan === selectedLabPlan.name);
+      });
+      document.getElementById('labOnboarding').scrollIntoView({behavior:'smooth', block:'start'});
+      goLabStep(1);
+    });
+  });
+
+  // fake document upload for lab verification
+  const labDropzone = document.getElementById('labDropzone');
+  const labFileInput = document.getElementById('labFileInput');
+  labFileInput.addEventListener('change', ()=>{
+    if(labFileInput.files.length){
+      document.getElementById('labFileName').textContent = '✓ ' + labFileInput.files.length + ' arquivo(s) anexado(s)';
+      labDropzone.classList.add('filled');
+    }
+  });
+
+  // portfolio photo preview during lab registration
+  document.getElementById('portfolioInput').addEventListener('change', function(){
+    const preview = document.getElementById('portfolioPreview');
+    preview.innerHTML = '';
+    Array.from(this.files).forEach(file=>{
+      const reader = new FileReader();
+      reader.onload = e=>{
+        const img = document.createElement('img');
+        img.src = e.target.result;
+        preview.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+    document.getElementById('portfolioDropzone').classList.add('filled');
+  });
+
+  // plan choice inside onboarding step 3
+  document.querySelectorAll('#labPlanChoice .option-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      document.querySelectorAll('#labPlanChoice .option-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedLabPlan = {name: card.dataset.plan, price: Number(card.dataset.price)};
+    });
+  });
+
+  document.querySelectorAll('#labPayTypes .option-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      document.querySelectorAll('#labPayTypes .option-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedLabPay = card.dataset.name;
+    });
+  });
+
+  function goLabStep(n){
+    if(n===3 && !labApproved){ alert('Seu laboratório ainda está em análise — aguarde a aprovação para escolher um plano.'); return; }
+    if(n===4 && !selectedLabPlan){ alert('Escolha um plano antes de continuar.'); return; }
+    document.querySelectorAll('.lab-step').forEach(s=>s.classList.add('hidden'));
+    document.getElementById('lab-step-'+n).classList.remove('hidden');
+    document.querySelectorAll('#labOnboarding .demo-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelector('#labOnboarding .demo-tab[data-labtab="'+n+'"]').classList.add('active');
+
+    if(n===4){
+      document.getElementById('labSumName').textContent = document.getElementById('labName').value || 'Seu laboratório';
+      document.getElementById('labSumPlan').textContent = selectedLabPlan.name;
+      document.getElementById('labSumTotal').textContent = selectedLabPlan.price > 0 ? ('R$ ' + selectedLabPlan.price + '/mês') : 'Sob consulta';
+    }
+  }
+
+  function submitForReview(){
+    if(!document.getElementById('labName').value.trim()){ alert('Informe o nome do laboratório.'); return; }
+    if(!document.getElementById('labCnpj').value.trim()){ alert('Informe o CNPJ do laboratório.'); return; }
+    if(!document.getElementById('labTech').value.trim()){ alert('Informe o responsável técnico e o registro (CRO).'); return; }
+    if(!labFileInput.files.length){ alert('Anexe os documentos exigidos antes de enviar para análise.'); return; }
+    labApproved = false;
+    document.getElementById('reviewPending').classList.remove('hidden');
+    document.getElementById('reviewApproved').classList.add('hidden');
+    document.querySelectorAll('.lab-step').forEach(s=>s.classList.add('hidden'));
+    document.getElementById('lab-step-2').classList.remove('hidden');
+    document.querySelectorAll('#labOnboarding .demo-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelector('#labOnboarding .demo-tab[data-labtab="2"]').classList.add('active');
+  }
+
+  function simulateApproval(){
+    labApproved = true;
+    document.getElementById('reviewPending').classList.add('hidden');
+    document.getElementById('reviewApproved').classList.remove('hidden');
+  }
+
+  function confirmLabSub(){
+    if(selectedLabPlan.price > 0 && !selectedLabPay){ alert('Selecione uma forma de pagamento da mensalidade.'); return; }
+    document.getElementById('labActiveMsg').textContent = 'PLANO ' + selectedLabPlan.name.toUpperCase() + ' ATIVO';
+    goLabStep(5);
+  }
+
+  function resetLabDemo(){
+    selectedLabPlan = selectedLabPay = null;
+    labApproved = false;
+    document.getElementById('labName').value = '';
+    document.getElementById('labCnpj').value = '';
+    document.getElementById('labTech').value = '';
+    document.getElementById('labFileName').textContent = '';
+    labDropzone.classList.remove('filled');
+    labFileInput.value = '';
+    document.getElementById('portfolioPreview').innerHTML = '';
+    document.getElementById('portfolioInput').value = '';
+    document.getElementById('portfolioDropzone').classList.remove('filled');
+    document.getElementById('reviewPending').classList.remove('hidden');
+    document.getElementById('reviewApproved').classList.add('hidden');
+    document.querySelectorAll('#labPlanChoice .option-card, #labPayTypes .option-card').forEach(c=>c.classList.remove('selected'));
+    goLabStep(1);
+  }
+
+  // ADMIN PANEL
+  let pendingLabs = [
+    {name:'Ortho Prime Lab', region:'Sudeste', specialty:'Ortodontia digital', cnpj:'12.345.678/0001-90', docs:3},
+    {name:'Facetas & Cia', region:'Centro-Oeste', specialty:'Lentes de contato / facetas', cnpj:'98.765.432/0001-11', docs:2}
+  ];
+  let activeLabs = [
+    {name:'Ateliê Digital SP', region:'Sudeste', plan:'Profissional', rating:'4.9', status:'active'},
+    {name:'LabOral Sul', region:'Sul', plan:'Básico', rating:'4.7', status:'active'},
+    {name:'Prótese Express NE', region:'Nordeste', plan:'Profissional', rating:'4.8', status:'active'}
+  ];
+  let rejectedLabs = [];
+
+  function renderAdmin(){
+    document.getElementById('statActive').textContent = activeLabs.filter(l=>l.status==='active').length;
+    document.getElementById('statPending').textContent = pendingLabs.length;
+    document.getElementById('countPending').textContent = pendingLabs.length;
+    document.getElementById('countActive').textContent = activeLabs.length;
+    document.getElementById('countRejected').textContent = rejectedLabs.length;
+
+    const pBody = document.getElementById('pendingBody');
+    pBody.innerHTML = pendingLabs.map((lab,i)=>`
+      <tr>
+        <td>${lab.name}</td>
+        <td>${lab.region}</td>
+        <td>${lab.specialty}</td>
+        <td class="mono">${lab.cnpj}</td>
+        <td><button class="doc-link" onclick="alert('${lab.docs} documento(s): alvará sanitário, contrato social, comprovante do responsável técnico.')">Ver ${lab.docs} docs</button></td>
+        <td class="row-actions">
+          <button class="btn-approve" onclick="approveLab(${i})">Aprovar</button>
+          <button class="btn-reject" onclick="rejectLab(${i})">Reprovar</button>
+        </td>
+      </tr>`).join('');
+
+    const aBody = document.getElementById('activeBody');
+    aBody.innerHTML = activeLabs.map((lab,i)=>`
+      <tr>
+        <td>${lab.name}</td>
+        <td>${lab.region}</td>
+        <td>${lab.plan}</td>
+        <td class="mono">★ ${lab.rating}</td>
+        <td><span class="admin-badge ${lab.status}">${lab.status==='active' ? 'Ativo' : 'Suspenso'}</span></td>
+        <td class="row-actions">
+          <button class="btn-suspend" onclick="toggleSuspend(${i})">${lab.status==='active' ? 'Suspender' : 'Reativar'}</button>
+        </td>
+      </tr>`).join('');
+
+    const rBody = document.getElementById('rejectedBody');
+    rBody.innerHTML = rejectedLabs.map(lab=>`
+      <tr>
+        <td>${lab.name}</td>
+        <td>${lab.region}</td>
+        <td>${lab.reason}</td>
+        <td class="mono">${lab.date}</td>
+      </tr>`).join('');
+  }
+
+  function approveLab(i){
+    const lab = pendingLabs[i];
+    pendingLabs.splice(i,1);
+    activeLabs.push({name:lab.name, region:lab.region, plan:'—', rating:'novo', status:'active'});
+    renderAdmin();
+  }
+  function rejectLab(i){
+    const reason = prompt('Motivo da reprovação (ex: documento ilegível, CNPJ irregular):', 'Documentação incompleta');
+    if(reason===null) return;
+    const lab = pendingLabs[i];
+    pendingLabs.splice(i,1);
+    rejectedLabs.push({name:lab.name, region:lab.region, reason:reason, date: new Date().toLocaleDateString('pt-BR')});
+    renderAdmin();
+  }
+  function toggleSuspend(i){
+    activeLabs[i].status = activeLabs[i].status==='active' ? 'suspended' : 'active';
+    renderAdmin();
+  }
+
+  document.querySelectorAll('.admin-tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.dataset.atab;
+      document.getElementById('tablePending').classList.toggle('hidden', target!=='pending');
+      document.getElementById('tableActive').classList.toggle('hidden', target!=='active');
+      document.getElementById('tableRejected').classList.toggle('hidden', target!=='rejected');
+    });
+  });
+
+  renderAdmin();
+
+  // region filter
+  document.querySelectorAll('.region-tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      document.querySelectorAll('.region-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      const region = tab.dataset.region;
+      document.querySelectorAll('.lab-card').forEach(card=>{
+        card.style.display = (region==='todas' || card.dataset.region===region) ? '' : 'none';
+      });
+    });
+  });
+
+  // render star fill based on data-score (out of 5)
+  document.querySelectorAll('.stars[data-score]').forEach(el=>{
+    const pct = (Number(el.dataset.score)/5)*100;
+    el.style.setProperty('--fill', pct+'%');
+  });
+
+  // toggle reviews / portfolio per lab card
+  document.querySelectorAll('.rating-toggle').forEach(btn=>{
+    btn.dataset.original = btn.textContent;
+    btn.addEventListener('click', ()=>{
+      const card = btn.closest('.lab-card');
+      const panel = card.querySelector('.' + btn.dataset.target);
+      panel.classList.toggle('hidden');
+      btn.textContent = panel.classList.contains('hidden') ? btn.dataset.original :
+        (btn.dataset.target === 'reviews' ? 'Ocultar avaliações' : 'Ocultar portfólio');
+    });
+  });
+
+  // populate portfolio grids with sample work photos
+  document.querySelectorAll('.portfolio-grid').forEach(grid=>{
+    const seed = grid.dataset.seed;
+    for(let i=0;i<6;i++){
+      const img = document.createElement('img');
+      img.src = 'https://picsum.photos/seed/protex' + seed + i + '/200/200';
+      img.alt = 'Trabalho entregue pelo laboratório';
+      img.loading = 'lazy';
+      grid.appendChild(img);
+    }
+    const caption = document.createElement('div');
+    caption.className = 'portfolio-caption';
+    caption.textContent = 'Fotos enviadas pelo próprio laboratório após a entrega dos casos.';
+    grid.parentElement.appendChild(caption);
+  });
+
+  // star picker for post-delivery rating
+  let chosenStars = 0;
+  document.querySelectorAll('#starPicker span').forEach(star=>{
+    star.addEventListener('click', ()=>{
+      chosenStars = Number(star.dataset.v);
+      document.querySelectorAll('#starPicker span').forEach(s=>{
+        s.classList.toggle('active', Number(s.dataset.v) <= chosenStars);
+      });
+    });
+  });
+  function submitRating(){
+    if(chosenStars===0){ alert('Selecione de 1 a 5 estrelas antes de enviar.'); return; }
+    document.getElementById('rateSent').style.display = 'block';
+    document.getElementById('submitRating').disabled = true;
+    document.getElementById('submitRating').style.opacity = 0.6;
+  }
+
+  // CHAT WIDGET
+  const chatPanel = document.getElementById('chatPanel');
+  const chatMessages = document.getElementById('chatMessages');
+  const chatBadge = document.getElementById('chatBadge');
+  const typingIndicator = document.getElementById('typingIndicator');
+  let chatOpen = false;
+
+  const labReplies = [
+    'Perfeito, já anotei aqui e sigo com a produção.',
+    'Consigo sim, vou ajustar e te aviso quando estiver pronto.',
+    'Boa pergunta — o prazo continua o mesmo, sem atraso.',
+    'Enviarei uma foto da peça antes do envio para sua aprovação.'
+  ];
+
+  function toggleChat(){
+    chatOpen = !chatOpen;
+    chatPanel.classList.toggle('hidden', !chatOpen);
+    if(chatOpen){
+      chatBadge.style.display = 'none';
+      document.getElementById('chatInput').focus();
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+  }
+  function openChat(){
+    if(!chatOpen) toggleChat();
+  }
+  function appendMsg(text, who){
+    const div = document.createElement('div');
+    div.className = 'msg ' + who;
+    div.textContent = text;
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+  function sendChat(){
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if(!text) return;
+    appendMsg(text, 'me');
+    input.value = '';
+    typingIndicator.style.display = 'block';
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    setTimeout(()=>{
+      typingIndicator.style.display = 'none';
+      const reply = labReplies[Math.floor(Math.random()*labReplies.length)];
+      appendMsg(reply, 'them');
+      if(!chatOpen){ chatBadge.style.display = 'flex'; }
+    }, 1400);
+  }
+</script>
+
+</body>
+</html>
